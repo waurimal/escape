@@ -3,23 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>방탈출 게임</title>
+    <title>사라진 시간 박물관 - 영어 방탈출</title>
     <style>
+        /* 기획서 기준: 짙은 남색 배경, 따뜻한 호박색 포인트 */
         :root {
-            --primary: #3498db;
-            --primary-hover: #2980b9;
-            --secondary: #2c3e50;
+            --primary: #f39c12; /* 호박색 (Amber) */
+            --primary-hover: #e67e22;
+            --secondary: #34495e;
             --danger: #e74c3c;
             --success: #2ecc71;
-            --warning: #f39c12;
-            --bg-color: #f0f8ff;
-            --surface: #ffffff;
-            --text: #333333;
+            --bg-color: #0b132b; /* 짙은 남색 */
+            --surface: #1c2541; /* 표면 색상 */
+            --text: #ffffff; /* 흰색 글씨 */
+            --text-muted: #a0aec0;
+            --input-bg: #3a506b;
         }
 
         body { 
             font-family: 'Pretendard', 'Malgun Gothic', sans-serif; 
             background-color: var(--bg-color); 
+            color: var(--text);
             display: flex; 
             justify-content: center; 
             align-items: center; 
@@ -33,104 +36,97 @@
             background: var(--surface); 
             padding: 2rem; 
             border-radius: 1rem; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
             width: 100%; 
-            max-width: 500px; 
+            max-width: 600px; 
             text-align: center; 
             position: relative;
+            border: 1px solid #3a506b;
         }
 
-        h1 { 
-            color: var(--secondary); 
+        h1, h2, h3 { 
+            color: var(--primary); 
             margin-top: 0;
-            margin-bottom: 1.5rem;
             user-select: none;
         }
 
-        .input-group { 
-            margin: 1rem 0; 
-            text-align: left; 
+        .story-box {
+            background: rgba(0,0,0,0.3);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            text-align: left;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #d1d8e0;
+            line-height: 1.6;
         }
 
-        .input-group label { 
-            display: block; 
-            margin-bottom: 0.5rem; 
-            font-weight: 600; 
-            color: var(--secondary); 
-            font-size: 0.9rem;
+        /* 단서판 UI */
+        .clue-board {
+            background: #000;
+            border: 2px solid var(--primary);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
         }
 
+        .clue-slot {
+            width: 40px;
+            height: 50px;
+            background: #222;
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            border: 1px dashed #555;
+        }
+
+        .input-group { margin: 1rem 0; text-align: left; }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #d1d8e0; font-size: 0.95rem; }
+        
         .input-group input[type="text"], 
         .input-group input[type="number"], 
         .input-group select { 
-            width: 100%; 
-            padding: 0.75rem; 
-            border: 1px solid #ddd; 
-            border-radius: 0.5rem; 
-            box-sizing: border-box; 
-            font-size: 1rem;
-            transition: border-color 0.2s;
-            font-family: inherit;
-            background-color: white;
+            width: 100%; padding: 0.75rem; border: 1px solid #5a6b8c; border-radius: 0.5rem; 
+            box-sizing: border-box; font-size: 1rem; transition: border-color 0.2s;
+            font-family: inherit; background-color: var(--input-bg); color: white;
         }
 
-        .input-group input:focus,
-        .input-group select:focus {
-            outline: none;
-            border-color: var(--primary);
+        .input-group input:focus, .input-group select:focus {
+            outline: none; border-color: var(--primary);
         }
 
         button { 
-            background-color: var(--primary); 
-            color: white; 
-            border: none; 
-            padding: 0.85rem 1.5rem; 
-            font-size: 1.1rem; 
-            font-weight: bold;
-            border-radius: 0.5rem; 
-            cursor: pointer; 
-            width: 100%; 
-            margin-top: 0.5rem; 
+            background-color: var(--primary); color: #0b132b; border: none; 
+            padding: 0.85rem 1.5rem; font-size: 1.1rem; font-weight: bold;
+            border-radius: 0.5rem; cursor: pointer; width: 100%; margin-top: 0.5rem; 
             transition: all 0.2s;
         }
 
         button:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
         button:active { transform: translateY(0); }
+        button.secondary-btn { background-color: var(--secondary); color: white; }
+        button.secondary-btn:hover { background-color: #2c3e50; }
         
-        button.secondary-btn { background-color: #95a5a6; }
-        button.secondary-btn:hover { background-color: #7f8c8d; }
-        
-        button.teacher-btn { background-color: var(--secondary); margin-top: 1.5rem; }
-        button.teacher-btn:hover { background-color: #1a252f; }
-
-        button.mode-btn { margin-bottom: 10px; font-size: 1.1rem; padding: 1rem; }
+        button.mode-btn { margin-bottom: 10px; font-size: 1.1rem; padding: 1rem; color: white; }
         button.mode-btn-single { background-color: #27ae60; }
-        button.mode-btn-pvp { background-color: #e67e22; }
+        button.mode-btn-pvp { background-color: #c0392b; }
         button.mode-btn-class { background-color: #8e44ad; }
-        button.mode-btn:hover { filter: brightness(90%); }
+        button.mode-btn:hover { filter: brightness(110%); }
 
         .hidden { display: none !important; }
 
-        .letters { 
-            font-size: 1.5rem; 
-            font-weight: bold; 
-            letter-spacing: 0.5rem; 
-            color: var(--danger); 
-            margin: 1.5rem 0; 
-            background: #fff0f0;
-            padding: 1rem;
-            border-radius: 0.5rem;
-        }
-
         #live-status {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-weight: bold;
-            font-size: 0.95rem;
-            border: 1px solid #ffeeba;
+            background-color: rgba(243, 156, 18, 0.2);
+            color: var(--primary);
+            padding: 10px; border-radius: 8px; margin-bottom: 1rem;
+            font-weight: bold; font-size: 0.95rem; border: 1px solid var(--primary);
             animation: pulse 2s infinite;
         }
 
@@ -140,85 +136,86 @@
             100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); }
         }
 
-        .choice-list {
-            text-align: left; 
-            background: #f8f9fa; 
-            padding: 15px; 
-            border-radius: 8px; 
-            border: 1px solid #ddd;
-        }
+        /* 퀴즈 UI 스타일 */
+        .quiz-item { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+        .quiz-item input { background: #1c2541; border: 1px solid #5a6b8c; color: white; padding: 5px; border-radius: 4px; }
         
-        .choice-list label {
-            display: flex; 
-            align-items: center; 
-            margin-bottom: 12px; 
-            font-weight: normal; 
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        
-        .choice-list input[type="radio"] {
-            margin-right: 10px;
-            transform: scale(1.2);
-            cursor: pointer;
-        }
+        .choice-list label { display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; font-size: 1rem; }
+        .choice-list input[type="radio"] { margin-right: 10px; transform: scale(1.2); }
 
-        #teacher-area { text-align: left; }
+        .order-row { display: flex; align-items: center; margin-bottom: 10px; gap: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; }
+        .order-row select { width: 120px; }
+
+        /* 교사 모드 테이블 */
         .table-container { overflow-x: auto; margin-top: 1rem; }
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th, td { border-bottom: 1px solid #eee; padding: 0.75rem; text-align: center; }
-        th { background-color: #f8f9fa; font-weight: 600; color: var(--secondary); }
+        th, td { border-bottom: 1px solid #3a506b; padding: 0.75rem; text-align: center; }
+        th { background-color: #0b132b; font-weight: 600; color: var(--primary); }
 
         /* 커스텀 모달 UI */
         #modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center;
+            background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center;
             z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s;
         }
         #modal-overlay.active { opacity: 1; pointer-events: all; }
         .modal-box {
-            background: white; padding: 2rem; border-radius: 1rem; width: 90%; max-width: 350px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2); text-align: center;
-            transform: translateY(-20px); transition: transform 0.2s;
+            background: var(--surface); padding: 2rem; border-radius: 1rem; width: 90%; max-width: 350px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5); text-align: center;
+            transform: translateY(-20px); transition: transform 0.2s; border: 1px solid var(--primary);
         }
         #modal-overlay.active .modal-box { transform: translateY(0); }
-        .modal-message { margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.5; color: var(--text); }
+        .modal-message { margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.5; color: white; }
         .modal-input { margin-bottom: 1.5rem; width: 100%; display: none; }
         .modal-buttons { display: flex; gap: 0.5rem; }
         .modal-buttons button { margin: 0; }
-        #modal-cancel-btn { display: none; background-color: #e74c3c; }
-        #modal-cancel-btn:hover { background-color: #c0392b; }
+        #modal-cancel-btn { display: none; background-color: var(--danger); color: white; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 id="main-title">🕵️‍♂️ 방탈출 게임</h1>
+    
+    <!-- 공통 단서판 (게임 진행 중에만 보임) -->
+    <div id="top-clue-board" class="hidden">
+        <h4 style="margin: 0 0 10px 0; color: var(--text-muted);">[ 수집된 단서 ]</h4>
+        <div class="clue-board">
+            <div class="clue-slot" id="slot-0"></div>
+            <div class="clue-slot" id="slot-1"></div>
+            <div class="clue-slot" id="slot-2"></div>
+            <div class="clue-slot" id="slot-3"></div>
+        </div>
+    </div>
 
     <!-- 0. 메인 화면 -->
     <div id="main-menu-area">
-        <p style="color: #666; margin-bottom: 2rem;">요원님, 환영합니다.<br>어떤 모드로 진행하시겠습니까?</p>
-        <button id="btn-goto-modes" style="padding: 1.2rem; font-size: 1.2rem;">🎮 게임하기</button>
-        <button id="btn-goto-teacher" class="teacher-btn">👨‍🏫 교사 모드</button>
+        <h1 style="font-size: 2rem; margin-bottom: 10px;">⏳ 사라진 시간 박물관</h1>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">The Museum of Lost Time</p>
+        
+        <div class="story-box">
+            "서기 2150년, 시간 박물관이 원인 모를 정전으로 봉인되었습니다. <br>안내 로봇 ROBI를 도와 각 전시실의 퍼즐을 풀고 출구 코드를 완성하세요!"
+        </div>
+
+        <button id="btn-goto-modes" style="padding: 1.2rem; font-size: 1.2rem;">🎮 입장하기 (게임 시작)</button>
+        <button id="btn-goto-teacher" class="secondary-btn" style="margin-top: 2rem;">👨‍🏫 교사 모드</button>
     </div>
 
     <!-- 1. 모드 선택 화면 -->
     <div id="mode-select-area" class="hidden">
-        <h3 style="color: var(--secondary); margin-bottom: 1.5rem;">게임 모드 선택</h3>
-        <button class="mode-btn mode-btn-single" onclick="selectMode('SINGLE')">👤 혼자하기</button>
+        <h2 style="margin-bottom: 1.5rem;">게임 모드 선택</h2>
+        <button class="mode-btn mode-btn-single" onclick="selectMode('SINGLE')">👤 혼자 탈출하기</button>
         <button class="mode-btn mode-btn-pvp" onclick="selectMode('PVP')">⚔️ 1:1 게임 (먼저 탈출하기)</button>
-        <button class="mode-btn mode-btn-class" onclick="selectMode('CLASS')">🏫 반 전체 게임</button>
+        <button class="mode-btn mode-btn-class" onclick="selectMode('CLASS')">🏫 반 전체 협동/경쟁</button>
         <button class="secondary-btn" onclick="showMainMenu()" style="margin-top: 1rem;">🔙 뒤로가기</button>
     </div>
 
     <!-- 2. 학생 정보 입력 화면 -->
     <div id="login-area" class="hidden">
-        <h3 id="login-mode-title" style="color: var(--primary);">모드 제목</h3>
-        <p style="color: #666; margin-bottom: 1.5rem;">요원 정보를 정확히 입력하세요.</p>
+        <h2 id="login-mode-title">모드 제목</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">요원 정보를 정확히 입력하세요.</p>
         
-        <!-- PVP 배틀 코드 전용 입력칸 -->
         <div id="pvp-code-group" class="input-group hidden">
-            <label style="color: var(--danger);">⚔️ 배틀 코드 (친구와 맞추세요)</label>
+            <label style="color: var(--danger);">⚔️ 배틀 코드 (상대방과 똑같이 입력)</label>
             <input type="text" id="pvpCode" placeholder="예: 777" style="border-color: var(--danger); font-weight: bold;">
         </div>
 
@@ -226,28 +223,17 @@
             <label>학년</label>
             <select id="grade">
                 <option value="">학년 선택</option>
-                <option value="1">1학년</option>
-                <option value="2">2학년</option>
-                <option value="3">3학년</option>
-                <option value="4">4학년</option>
+                <option value="6" selected>6학년</option>
                 <option value="5">5학년</option>
-                <option value="6">6학년</option>
             </select>
         </div>
         <div class="input-group">
             <label>반</label>
             <select id="classNum">
                 <option value="">반 선택</option>
-                <option value="1">1반</option>
-                <option value="2">2반</option>
-                <option value="3">3반</option>
-                <option value="4">4반</option>
-                <option value="5">5반</option>
-                <option value="6">6반</option>
-                <option value="7">7반</option>
-                <option value="8">8반</option>
-                <option value="9">9반</option>
-                <option value="10">10반</option>
+                <option value="1">1반</option> <option value="2">2반</option>
+                <option value="3">3반</option> <option value="4">4반</option>
+                <option value="5">5반</option> <option value="6">6반</option>
             </select>
         </div>
         <div class="input-group">
@@ -264,33 +250,38 @@
 
     <!-- 3. 게임 화면 -->
     <div id="game-area" class="hidden">
-        <!-- 실시간 멀티플레이 상태창 -->
         <div id="live-status" class="hidden">상태 업데이트 중...</div>
 
-        <h2 id="mission-title" style="color: var(--primary);">Mission 1</h2>
-        <p id="mission-desc" style="font-size: 1.1rem; line-height: 1.5; color: #555; min-height: 3rem;"></p>
+        <h2 id="mission-title" style="margin-bottom: 5px;">전시실 1</h2>
+        <p id="mission-subtitle" style="color: var(--text-muted); margin-top: 0; font-size: 0.9rem;"></p>
         
-        <div id="dynamic-input-container" class="input-group"></div>
+        <div class="story-box" id="mission-desc" style="font-size: 1rem;"></div>
+        
+        <div id="dynamic-input-container" style="margin-top: 20px;"></div>
 
-        <button id="submit-btn">정답 확인</button>
-        
-        <div class="letters" id="collected-letters">_ _ _ _ _ _</div>
+        <button id="submit-btn" style="margin-top: 20px;">정답 확인 (단서 얻기)</button>
     </div>
 
     <!-- 4. 성공 화면 -->
     <div id="success-area" class="hidden">
         <h2 id="success-title" style="color: var(--success); font-size: 2rem; margin-bottom: 0.5rem;">🎉 탈출 성공! 🎉</h2>
-        <p id="success-desc">선생님께 가서 완성된 코드를 조용히 말씀해 주세요!</p>
-        <div class="letters">S U M M E R</div>
-        <p style="color: #666; font-size: 0.9rem;">그리고 활동지의 질문에 대답하여 도장을 받으세요!</p>
+        <div class="story-box" style="text-align: center; font-size: 1.2rem;">
+            "You did it! The door is open now. Thank you, time traveler!"<br>- ROBI
+        </div>
+        <p id="success-desc">선생님께 가서 아래의 완성된 출구 코드를 조용히 말씀해 주세요!</p>
+        <div class="clue-board" style="margin-top: 20px;">
+            <div class="clue-slot">T</div><div class="clue-slot">I</div>
+            <div class="clue-slot">M</div><div class="clue-slot">E</div>
+        </div>
         <button onclick="location.reload()" style="margin-top: 2rem;">처음으로</button>
     </div>
 
     <!-- 5. 교사 모드 화면 -->
     <div id="teacher-area" class="hidden">
-        <h2 style="text-align: center; color: var(--secondary);">👨‍🏫 교사 모드</h2>
+        <h2>👨‍🏫 교사 대시보드</h2>
         <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
             <button id="refresh-btn">새로고침</button>
+            <button id="change-pwd-btn" style="background-color: var(--danger);">비밀번호 변경</button>
             <button class="secondary-btn" onclick="location.reload()">홈으로</button>
         </div>
         <div class="table-container">
@@ -315,7 +306,7 @@
     <div class="modal-box">
         <div class="modal-message" id="modal-message">메시지 내용</div>
         <div class="input-group modal-input" id="modal-input-group">
-            <input type="password" id="modal-input" placeholder="비밀번호 입력">
+            <input type="password" id="modal-input" placeholder="입력하세요">
         </div>
         <div class="modal-buttons">
             <button id="modal-ok-btn">확인</button>
@@ -327,9 +318,9 @@
 <!-- Firebase 모듈 및 앱 로직 -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getFirestore, collection, doc, setDoc, getDocs, query, orderBy, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc, getDoc, getDocs, query, orderBy, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 선생님의 Firebase 설정
+    // Firebase 설정
     const firebaseConfig = {
         apiKey: "AIzaSyDS_L_TlH-zKtGuQg0HdSA83YNTtOWBFys",
         authDomain: "escape-9d5f3.firebaseapp.com",
@@ -343,25 +334,85 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 미션 데이터
+    // [기획서 반영] 미션 데이터
     const missions = [
-        { type: "text", desc: "Find the 1st letter of Ethan's grade.", answer: "S", letter: "S" },
-        { type: "choice", desc: "누구의 생일이 가장 빠른가요?", options: ["Ethan", "Judy", "Chloe", "Liam"], answer: "1", letter: "U" },
-        { type: "text", desc: "Find the 3rd letter of Chloe's favorite season.", answer: "M", letter: "M" },
-        { type: "choice", desc: "Chloe의 시험 과목은 무엇일까요?", options: ["Math", "Science", "History", "English"], answer: "0", letter: "M" },
-        { type: "text", desc: "Find the 4th letter of the name of the building behind Judy's house.", answer: "E", letter: "E" },
-        { type: "choice", desc: "Liam의 모자 색깔은?", options: ["Red", "Green", "Blue", "Black"], answer: "1", letter: "R" }
+        { 
+            title: "전시실 1", subtitle: "The Time Room (시간실)",
+            desc: "ROBI: 벽에 멈춘 세 개의 시계가 있습니다. 빈칸에 알맞은 시제(과거, 현재, 미래)의 동사를 입력하여 시계를 다시 움직이게 하세요.",
+            type: "multi-text", 
+            questions: [
+                { text: "Yesterday, I ______ (go) to the museum.", hint: "힌트: go의 과거형" },
+                { text: "Right now, I ____________ (look) at a robot.", hint: "힌트: am/are/is + ~ing" },
+                { text: "Tomorrow, I ____________ (visit) the future.", hint: "힌트: 미래를 나타내는 조동사 + 동사원형" }
+            ],
+            answers: ["went", "am looking", "will visit"], 
+            letter: "T" 
+        },
+        { 
+            title: "전시실 2", subtitle: "The Maze Hall (미로 복도)",
+            desc: "ROBI: 다음 길 안내를 읽고 정확한 출구의 위치를 찾으세요!<br><br><i>'Go straight two steps.<br>Turn left and go straight one step.<br>Where is the exit? It is next to the painting.'</i>",
+            type: "choice", 
+            options: ["창문 옆 타일 (Next to the window)", "그림 옆 타일 (Next to the painting)", "동상 앞 타일 (In front of the statue)", "문 뒤 타일 (Behind the door)"], 
+            answer: "1", // 인덱스 1
+            letter: "I" 
+        },
+        { 
+            title: "전시실 3", subtitle: "The Secret Kitchen (비밀 주방)",
+            desc: "ROBI: 제가 좋아하는 '에너지 수프'를 만들어야 다음 문이 열립니다. 레시피의 올바른 순서를 선택하세요.",
+            type: "order", 
+            items: [
+                "add some water. (물 넣기)",
+                "mix everything with a spoon. (섞기)",
+                "wash the vegetables. (채소 씻기)",
+                "put the carrots in the pot. (당근 넣기)"
+            ],
+            // 정답 순서: First(wash) -> Then(add water) -> Next(put carrots) -> Finally(mix)
+            // 인덱스: 2 -> 0 -> 3 -> 1
+            answers: ["2", "0", "3", "1"],
+            letter: "M" 
+        },
+        { 
+            title: "전시실 4", subtitle: "The Memory Room (기억의 방)",
+            desc: "ROBI: 마지막 방입니다. 흩어진 기억을 모아 영단어의 스펠링을 완성하세요.",
+            type: "multi-text", 
+            questions: [
+                { text: "m _ s _ u m  (박물관)", hint: "" },
+                { text: "철자 섞기: E-T-R-U-F-U  (미래)", hint: "" }
+            ],
+            answers: ["museum", "future"], 
+            letter: "E" 
+        },
+        { 
+            title: "최종 출구", subtitle: "The Exit",
+            desc: "ROBI: 훌륭합니다! 지금까지 수집한 4개의 단서 글자를 모두 조합하여 최종 출구 코드를 입력하세요.",
+            type: "final", 
+            answer: "TIME", 
+            letter: "" 
+        }
     ];
 
     let currentMission = 0;
     let studentInfo = {};
     let collectedLetters = [];
-    
-    // 게임 상태 변수
     let selectedMode = 'SINGLE'; 
     let roomId = null; 
     let studentDocId = null;
     let liveUnsubscribe = null;
+    let teacherPassword = "0000"; // 기본값
+
+    // --- 교사 비밀번호 초기 로드 ---
+    async function loadTeacherConfig() {
+        try {
+            const docRef = doc(db, "escape_settings", "teacher");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                teacherPassword = docSnap.data().password;
+            } else {
+                await setDoc(docRef, { password: "0000" });
+            }
+        } catch(e) { console.error("Config Load Error", e); }
+    }
+    loadTeacherConfig();
 
     // --- 화면 이동 제어 ---
     window.showMainMenu = () => {
@@ -380,13 +431,9 @@
         const pvpGroup = document.getElementById('pvp-code-group');
         
         pvpGroup.classList.add('hidden');
-        
-        if(mode === 'SINGLE') loginTitle.innerText = "👤 혼자하기 모드";
-        else if(mode === 'PVP') {
-            loginTitle.innerText = "⚔️ 1:1 배틀 모드";
-            pvpGroup.classList.remove('hidden');
-        }
-        else if(mode === 'CLASS') loginTitle.innerText = "🏫 반 전체 게임 모드";
+        if(mode === 'SINGLE') loginTitle.innerText = "👤 혼자 탈출하기";
+        else if(mode === 'PVP') { loginTitle.innerText = "⚔️ 1:1 배틀 모드"; pvpGroup.classList.remove('hidden'); }
+        else if(mode === 'CLASS') loginTitle.innerText = "🏫 반 전체 게임";
 
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
         document.getElementById('login-area').classList.remove('hidden');
@@ -410,14 +457,16 @@
         });
     }
 
-    function showPrompt(message) {
+    function showPrompt(message, type="password") {
         return new Promise((resolve) => {
             modalMessage.innerHTML = message;
             modalInputGroup.style.display = 'block';
+            modalInput.type = type;
             modalInput.value = '';
             modalCancelBtn.style.display = 'block';
             modalOverlay.classList.add('active');
             modalInput.focus();
+            
             modalOkBtn.onclick = () => { modalOverlay.classList.remove('active'); resolve(modalInput.value); };
             modalCancelBtn.onclick = () => { modalOverlay.classList.remove('active'); resolve(null); };
             modalInput.onkeyup = (e) => { if (e.key === 'Enter') modalOkBtn.click(); };
@@ -427,15 +476,13 @@
     // --- 이벤트 리스너 ---
     document.getElementById('btn-goto-modes').addEventListener('click', showModeSelect);
     document.getElementById('btn-goto-teacher').addEventListener('click', enterTeacherMode);
+    document.getElementById('change-pwd-btn').addEventListener('click', changeTeacherPwd);
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('submit-btn').addEventListener('click', checkAnswer);
     document.getElementById('refresh-btn').addEventListener('click', loadStudentData);
 
     document.querySelectorAll('#login-area input').forEach(input => {
         input.addEventListener('keyup', (e) => { if(e.key === 'Enter') startGame(); });
-    });
-    document.getElementById('dynamic-input-container').addEventListener('keyup', (e) => {
-        if(e.key === 'Enter' && e.target.id === 'answer') checkAnswer();
     });
 
     // --- 게임 로직 ---
@@ -447,187 +494,225 @@
         const pvpCode = document.getElementById('pvpCode').value.trim();
 
         if(!g || !c || !n || !name) {
-            await showAlert("⚠️ 학년, 반, 번호, 이름을 모두 입력해주세요!");
-            return;
+            await showAlert("⚠️ 학년, 반, 번호, 이름을 모두 입력해주세요!"); return;
         }
-
         if(selectedMode === 'PVP' && !pvpCode) {
-            await showAlert("⚠️ 1:1 배틀을 위한 <b>배틀 코드</b>를 입력해주세요!");
-            return;
+            await showAlert("⚠️ 1:1 배틀 코드를 입력해주세요!"); return;
         }
 
         studentInfo = { grade: g, class: c, number: n, name: name };
         studentDocId = `${g}-${c}-${n}-${name}`;
         
-        // 방(Room) ID 설정
         if (selectedMode === 'PVP') roomId = `PVP-${pvpCode}`;
         else if (selectedMode === 'CLASS') roomId = `CLASS-${g}-${c}`;
-        else roomId = null; // SINGLE 모드
+        else roomId = null;
 
-        document.getElementById('login-area').classList.add('hidden');
+        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+        document.getElementById('top-clue-board').classList.remove('hidden');
         document.getElementById('game-area').classList.remove('hidden');
         
-        // 멀티플레이 모드 초기화 및 리스너 등록
-        if (roomId) {
-            await initMultiplayer();
-        }
-
+        if (roomId) await initMultiplayer();
         updateMissionUI();
     }
 
     async function initMultiplayer() {
         document.getElementById('live-status').classList.remove('hidden');
         document.getElementById('live-status').innerHTML = "⏳ 동기화 중...";
-
         try {
             const playerRef = doc(db, "escape_live_rooms", roomId, "players", studentDocId);
-            await setDoc(playerRef, {
-                name: studentInfo.name,
-                mission: 1, // 1번 미션부터 시작
-                status: 'PLAYING',
-                updatedAt: serverTimestamp()
-            });
+            await setDoc(playerRef, { name: studentInfo.name, mission: 1, status: 'PLAYING', updatedAt: serverTimestamp() });
 
-            // 실시간 리스너 달기
             const roomPlayersRef = collection(db, "escape_live_rooms", roomId, "players");
             liveUnsubscribe = onSnapshot(roomPlayersRef, (snapshot) => {
                 const players = [];
                 snapshot.forEach(doc => players.push(doc.data()));
                 updateLiveStatusUI(players);
             });
-        } catch(e) {
-            console.error("Multiplayer Sync Error", e);
-        }
+        } catch(e) { console.error("Sync Error", e); }
     }
 
     async function updateLiveProgress(newMissionIdx, statusStr = 'PLAYING') {
         if (!roomId) return;
         try {
             const playerRef = doc(db, "escape_live_rooms", roomId, "players", studentDocId);
-            await setDoc(playerRef, { 
-                mission: newMissionIdx + 1, 
-                status: statusStr,
-                updatedAt: serverTimestamp()
-            }, { merge: true });
-        } catch(e) { console.error("Update Progress Error", e); }
+            await setDoc(playerRef, { mission: newMissionIdx + 1, status: statusStr, updatedAt: serverTimestamp() }, { merge: true });
+        } catch(e) {}
     }
 
     function updateLiveStatusUI(players) {
         const statusBox = document.getElementById('live-status');
-        
         if (selectedMode === 'PVP') {
             const opponent = players.find(p => p.name !== studentInfo.name);
-            if (!opponent) {
-                statusBox.innerHTML = `⏳ 상대방의 접속을 기다리고 있습니다...`;
-            } else {
-                if (opponent.status === 'CLEAR') {
-                    statusBox.innerHTML = `🚨 <b>상대방(${opponent.name})이 방탈출에 성공했습니다!</b> 빨리 서두르세요!`;
-                } else {
-                    statusBox.innerHTML = `⚔️ 상대방(${opponent.name}) : Mission <b>${opponent.mission}</b> 진행 중!`;
-                }
+            if (!opponent) statusBox.innerHTML = `⏳ 상대방의 접속을 기다리고 있습니다...`;
+            else {
+                if (opponent.status === 'CLEAR') statusBox.innerHTML = `🚨 <b>상대방(${opponent.name}) 탈출 성공!</b> 서두르세요!`;
+                else statusBox.innerHTML = `⚔️ 상대방(${opponent.name}) : 전시실 <b>${opponent.mission}</b> 진행 중!`;
             }
         } else if (selectedMode === 'CLASS') {
-            const clearedCount = players.filter(p => p.status === 'CLEAR').length;
-            const playingCount = players.length - clearedCount;
-            statusBox.innerHTML = `🏫 반 전체 현황: <b>${clearedCount}명</b> 탈출 성공! / ${playingCount}명 진행 중`;
+            const cleared = players.filter(p => p.status === 'CLEAR').length;
+            const playing = players.length - cleared;
+            statusBox.innerHTML = `🏫 반 전체 현황: <b>${cleared}명</b> 탈출 성공! / ${playing}명 진행 중`;
         }
     }
 
     function updateMissionUI() {
         const mission = missions[currentMission];
-        document.getElementById('mission-title').innerText = `Mission ${currentMission + 1}`;
-        document.getElementById('mission-desc').innerText = mission.desc;
+        document.getElementById('mission-title').innerText = mission.title;
+        document.getElementById('mission-subtitle').innerText = mission.subtitle;
+        document.getElementById('mission-desc').innerHTML = mission.desc;
         
         const container = document.getElementById('dynamic-input-container');
         container.innerHTML = ""; 
 
-        if (mission.type === "text") {
-            container.innerHTML = `
-                <label>정답 (알파벳 1글자)</label>
-                <input type="text" id="answer" maxlength="1" placeholder="알파벳 입력" style="text-transform: uppercase; text-align: center; font-size: 1.5rem; letter-spacing: 2px;">
-            `;
-            setTimeout(() => { const ans = document.getElementById('answer'); if(ans) ans.focus(); }, 100);
+        if (mission.type === "multi-text") {
+            mission.questions.forEach((q, idx) => {
+                // 문장에서 빈칸을 input으로 치환하는 UI 구성
+                container.innerHTML += `
+                    <div class="quiz-item">
+                        <label>${q.text}</label>
+                        <input type="text" id="ans-${idx}" placeholder="정답 입력" style="width: 100%; margin-top:5px;" autocomplete="off">
+                        ${q.hint ? `<div style="font-size:0.8rem; color:var(--primary); margin-top:5px;">${q.hint}</div>` : ''}
+                    </div>
+                `;
+            });
         } else if (mission.type === "choice") {
-            let optionsHtml = "";
+            let optionsHtml = `<div class="quiz-item choice-list">`;
             mission.options.forEach((opt, idx) => {
                 optionsHtml += `<label><input type="radio" name="choice-answer" value="${idx}"> ${opt}</label>`;
             });
-            container.innerHTML = `<label>정답을 선택하세요</label><div class="choice-list">${optionsHtml}</div>`;
+            optionsHtml += `</div>`;
+            container.innerHTML = optionsHtml;
+        } else if (mission.type === "order") {
+            const stepLabels = ["First", "Then", "Next", "Finally"];
+            // 보기를 먼저 보여줌
+            let listHtml = `<div class="quiz-item"><strong style="color:var(--primary)">[보기]</strong><br>`;
+            mission.items.forEach((item, idx) => { listHtml += `(${idx+1}) ${item}<br>`; });
+            listHtml += `</div>`;
+            container.innerHTML += listHtml;
+
+            // 순서 선택 드롭다운
+            stepLabels.forEach((label, idx) => {
+                let selectHtml = `<div class="order-row"><b>${label}</b>: <select id="order-${idx}"><option value="">선택</option>`;
+                mission.items.forEach((item, optIdx) => {
+                    selectHtml += `<option value="${optIdx}">(${optIdx+1}) 번재 내용</option>`;
+                });
+                selectHtml += `</select></div>`;
+                container.innerHTML += selectHtml;
+            });
+        } else if (mission.type === "final") {
+            container.innerHTML = `
+                <div class="quiz-item" style="text-align: center;">
+                    <label style="font-size: 1.2rem; color:var(--primary);">🔒 출구 코드 입력</label>
+                    <input type="text" id="final-ans" maxlength="4" style="text-transform: uppercase; text-align: center; font-size: 2rem; letter-spacing: 5px; margin-top:10px;">
+                </div>
+            `;
         }
         
-        let displayStr = "";
-        for(let i=0; i<missions.length; i++) displayStr += (i < collectedLetters.length) ? collectedLetters[i] + " " : "_ ";
-        document.getElementById('collected-letters').innerText = displayStr.trim();
+        // 단서판 업데이트
+        for(let i=0; i<4; i++) {
+            document.getElementById(`slot-${i}`).innerText = (i < collectedLetters.length) ? collectedLetters[i] : "";
+        }
     }
+
+    // 답안 비교시 공백제거 및 소문자 변환 로직
+    const sanitize = (str) => str.replace(/\s+/g, '').toLowerCase();
 
     async function checkAnswer() {
         const mission = missions[currentMission];
-        let userAnswer = "";
+        let isCorrect = true;
 
-        if (mission.type === "text") {
-            const answerInput = document.getElementById('answer');
-            if (!answerInput || !answerInput.value.trim()) { await showAlert("⚠️ <b>정답을 입력해주세요!</b>"); return; }
-            userAnswer = answerInput.value.toUpperCase().trim();
+        if (mission.type === "multi-text") {
+            for(let i=0; i<mission.questions.length; i++) {
+                const val = document.getElementById(`ans-${i}`).value;
+                if(sanitize(val) !== sanitize(mission.answers[i])) {
+                    isCorrect = false; break;
+                }
+            }
+            if(!isCorrect) await showAlert("❌ <b>오답이 있거나 빈칸이 있습니다.</b><br>다시 확인해 보세요!");
         } else if (mission.type === "choice") {
             const selectedOpt = document.querySelector('input[name="choice-answer"]:checked');
             if (!selectedOpt) { await showAlert("⚠️ <b>정답을 선택해주세요!</b>"); return; }
-            userAnswer = selectedOpt.value;
+            if(selectedOpt.value !== mission.answer) isCorrect = false;
+            if(!isCorrect) await showAlert("❌ <b>틀렸습니다.</b> 지문을 다시 잘 읽어보세요.");
+        } else if (mission.type === "order") {
+            for(let i=0; i<4; i++) {
+                const val = document.getElementById(`order-${i}`).value;
+                if(val === "" || val !== mission.answers[i]) {
+                    isCorrect = false; break;
+                }
+            }
+            if(!isCorrect) await showAlert("❌ <b>순서가 올바르지 않습니다.</b><br>요리 순서를 나타내는 말(First, Then...)을 생각해보세요.");
+        } else if (mission.type === "final") {
+            const val = document.getElementById('final-ans').value;
+            if(sanitize(val) !== sanitize(mission.answer)) {
+                isCorrect = false;
+                await showAlert("❌ <b>코드가 일치하지 않습니다!</b><br>단서판의 글자들을 확인하세요.");
+            }
         }
 
-        if(userAnswer === mission.answer) {
-            collectedLetters.push(mission.letter);
+        if(isCorrect) {
+            if(mission.letter !== "") {
+                collectedLetters.push(mission.letter);
+                await showAlert(`✅ <b>정답입니다!</b><br>새로운 단서 <strong style='color:var(--primary); font-size:1.5rem;'>${mission.letter}</strong> 를 획득했습니다!`);
+            }
             currentMission++;
             
             if(currentMission < missions.length) {
-                // 진도 업데이트(멀티플레이)
                 updateLiveProgress(currentMission);
-                await showAlert(`✅ <b>정답입니다!</b><br>단서 <strong style='color:var(--danger); font-size:1.2rem;'>${mission.letter}</strong> 를 얻었습니다.<br>다음 미션으로 이동합니다.`);
                 updateMissionUI();
             } else {
                 gameClear();
-            }
-        } else {
-            await showAlert("❌ <b>틀렸습니다.</b><br>다시 한 번 생각해 보세요!");
-            if (mission.type === "text") {
-                document.getElementById('answer').value = "";
-                document.getElementById('answer').focus();
             }
         }
     }
 
     async function gameClear() {
-        if(liveUnsubscribe) liveUnsubscribe(); // 리스너 종료
-        updateLiveProgress(currentMission, 'CLEAR'); // 멀티플레이 DB 완료 처리
+        if(liveUnsubscribe) liveUnsubscribe();
+        updateLiveProgress(currentMission, 'CLEAR');
 
+        document.getElementById('top-clue-board').classList.add('hidden');
         document.getElementById('game-area').classList.add('hidden');
         document.getElementById('success-area').classList.remove('hidden');
         
         if(selectedMode === 'PVP') {
-            document.getElementById('success-title').innerHTML = "🎉 배틀 종료! 탈출 완료! 🎉";
+            document.getElementById('success-title').innerHTML = "🎉 배틀 승리! 탈출 완료! 🎉";
         }
 
-        // 교사 확인용 통합 레코드 저장 (모든 모드 공통)
         try {
             const docRef = doc(db, "escape_records", studentDocId);
             let modeLabel = selectedMode === 'SINGLE' ? '혼자' : (selectedMode === 'PVP' ? '1:1배틀' : '반전체');
-            await setDoc(docRef, {
-                ...studentInfo,
-                mode: modeLabel,
-                status: "CLEAR",
-                clearTime: serverTimestamp()
-            });
-        } catch (error) { console.error("데이터 저장 실패:", error); }
+            await setDoc(docRef, { ...studentInfo, mode: modeLabel, status: "CLEAR", clearTime: serverTimestamp() });
+        } catch (error) { console.error("Record Save Error", error); }
     }
 
     // --- 교사 모드 로직 ---
     async function enterTeacherMode() {
-        const pwd = await showPrompt("👨‍🏫 <b>교사 인증</b><br>비밀번호를 입력하세요:");
-        if(pwd === "0000") {
+        const pwd = await showPrompt("👨‍🏫 <b>교사 인증</b><br>비밀번호를 입력하세요:", "password");
+        if(pwd === teacherPassword) {
             document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
             document.getElementById('teacher-area').classList.remove('hidden');
             loadStudentData();
         } else if(pwd !== null) {
             await showAlert("❌ 비밀번호가 틀렸습니다.");
+        }
+    }
+
+    async function changeTeacherPwd() {
+        const currentPwd = await showPrompt("현재 비밀번호를 입력하세요:", "password");
+        if(currentPwd !== teacherPassword) {
+            if(currentPwd !== null) await showAlert("❌ 현재 비밀번호가 틀렸습니다.");
+            return;
+        }
+
+        const newPwd = await showPrompt("새로운 비밀번호를 입력하세요:", "text");
+        if(newPwd && newPwd.trim().length > 0) {
+            try {
+                await setDoc(doc(db, "escape_settings", "teacher"), { password: newPwd.trim() });
+                teacherPassword = newPwd.trim();
+                await showAlert("✅ 비밀번호가 성공적으로 변경되었습니다.");
+            } catch(e) {
+                await showAlert("❌ 오류가 발생했습니다. DB 권한을 확인하세요.");
+            }
         }
     }
 
@@ -642,7 +727,7 @@
             
             tbody.innerHTML = "";
             if(querySnapshot.empty) {
-                tbody.innerHTML = "<tr><td colspan='4' style='color:#666;'>아직 완료한 학생이 없습니다.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='4' style='color:var(--text-muted);'>아직 완료한 학생이 없습니다.</td></tr>";
                 return;
             }
             
@@ -654,19 +739,19 @@
                     timeStr = `${date.getHours()}시 ${date.getMinutes()}분 ${date.getSeconds()}초`;
                 }
                 
-                const modeBadge = `<span style="background:#eee; padding:2px 6px; border-radius:4px; font-size:0.8rem;">${data.mode || '기본'}</span>`;
+                const modeBadge = `<span style="background:var(--secondary); padding:2px 6px; border-radius:4px; font-size:0.8rem; color:white;">${data.mode || '기본'}</span>`;
                 
                 const row = `<tr>
                     <td><b>${data.grade}</b>-${data.class}-${data.number} ${data.name}</td>
                     <td>${modeBadge}</td>
                     <td style="color:var(--success); font-weight:bold;">${data.status}</td>
-                    <td style="color:#666; font-size:0.85rem;">${timeStr}</td>
+                    <td style="color:var(--text-muted); font-size:0.85rem;">${timeStr}</td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
         } catch (error) {
-            console.error("데이터 로드 에러:", error);
-            tbody.innerHTML = "<tr><td colspan='4' style='color:var(--danger);'>데이터를 불러오는 데 실패했습니다. (DB 규칙을 확인해주세요)</td></tr>";
+            console.error("Data Load Error", error);
+            tbody.innerHTML = "<tr><td colspan='4' style='color:var(--danger);'>데이터를 불러오는 데 실패했습니다.</td></tr>";
         }
     }
 </script>
