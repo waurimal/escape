@@ -4,101 +4,281 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1학기 총복습 영어 방탈출</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    
     <style>
-        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f8ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 90%; max-width: 500px; text-align: center; }
-        h1 { color: #2c3e50; cursor: pointer; }
-        .input-group { margin: 15px 0; text-align: left; }
-        .input-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; }
-        .input-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { background-color: #3498db; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; }
-        button:hover { background-color: #2980b9; }
-        .hidden { display: none; }
-        .letters { font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #e74c3c; margin: 20px 0; }
-        #teacher-area table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-        #teacher-area th, #teacher-area td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        #teacher-area th { background-color: #f2f2f2; }
+        :root {
+            --primary: #3498db;
+            --primary-hover: #2980b9;
+            --secondary: #2c3e50;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --bg-color: #f0f8ff;
+            --surface: #ffffff;
+            --text: #333333;
+        }
+
+        body { 
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif; 
+            background-color: var(--bg-color); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container { 
+            background: var(--surface); 
+            padding: 2rem; 
+            border-radius: 1rem; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            width: 100%; 
+            max-width: 500px; 
+            text-align: center; 
+            position: relative;
+        }
+
+        h1 { 
+            color: var(--secondary); 
+            cursor: pointer; 
+            margin-top: 0;
+            user-select: none;
+        }
+
+        .input-group { 
+            margin: 1rem 0; 
+            text-align: left; 
+        }
+
+        .input-group label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            font-weight: 600; 
+            color: var(--secondary); 
+            font-size: 0.9rem;
+        }
+
+        .input-group input { 
+            width: 100%; 
+            padding: 0.75rem; 
+            border: 1px solid #ddd; 
+            border-radius: 0.5rem; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button { 
+            background-color: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 0.75rem 1.5rem; 
+            font-size: 1rem; 
+            font-weight: bold;
+            border-radius: 0.5rem; 
+            cursor: pointer; 
+            width: 100%; 
+            margin-top: 0.5rem; 
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+        button:active { transform: scale(0.98); }
+        button.secondary-btn { background-color: #95a5a6; }
+        button.secondary-btn:hover { background-color: #7f8c8d; }
+
+        .hidden { display: none !important; }
+
+        .letters { 
+            font-size: 1.5rem; 
+            font-weight: bold; 
+            letter-spacing: 0.5rem; 
+            color: var(--danger); 
+            margin: 1.5rem 0; 
+            background: #fff0f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        #teacher-area {
+            text-align: left;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 0.9rem; 
+        }
+
+        th, td { 
+            border-bottom: 1px solid #eee; 
+            padding: 0.75rem; 
+            text-align: center; 
+        }
+
+        th { 
+            background-color: #f8f9fa; 
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        /* 커스텀 모달 UI */
+        #modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        #modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            transform: translateY(-20px);
+            transition: transform 0.2s;
+        }
+
+        #modal-overlay.active .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-message { margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.5; color: var(--text); }
+        .modal-input { margin-bottom: 1.5rem; width: 100%; display: none; }
+        .modal-buttons { display: flex; gap: 0.5rem; }
+        .modal-buttons button { margin: 0; }
+        #modal-cancel-btn { display: none; background-color: #e74c3c; }
+        #modal-cancel-btn:hover { background-color: #c0392b; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 ondblclick="enterTeacherMode()">🕵️‍♂️ 1학기 복습 방탈출</h1>
+    <!-- 타이틀을 더블클릭하면 교사모드로 진입합니다 -->
+    <h1 id="main-title">🕵️‍♂️ 1학기 복습 방탈출</h1>
 
+    <!-- 1. 학생 정보 입력 화면 -->
     <div id="login-area">
-        <p>방탈출에 도전할 요원 정보를 입력하세요.</p>
+        <p style="color: #666; margin-bottom: 1.5rem;">방탈출에 도전할 요원 정보를 입력하세요.</p>
         <div class="input-group">
-            <label>학년</label><input type="number" id="grade" placeholder="예: 6">
+            <label>학년</label><input type="number" id="grade" placeholder="예: 6" min="1" max="6">
         </div>
         <div class="input-group">
-            <label>반</label><input type="number" id="classNum" placeholder="예: 1">
+            <label>반</label><input type="number" id="classNum" placeholder="예: 1" min="1" max="20">
         </div>
         <div class="input-group">
-            <label>번호</label><input type="number" id="studentNum" placeholder="예: 12">
+            <label>번호</label><input type="number" id="studentNum" placeholder="예: 12" min="1" max="50">
         </div>
         <div class="input-group">
             <label>이름</label><input type="text" id="studentName" placeholder="예: 홍길동">
         </div>
-        <button onclick="startGame()">게임 시작하기</button>
+        <button id="start-btn">게임 시작하기</button>
     </div>
 
+    <!-- 2. 게임 화면 -->
     <div id="game-area" class="hidden">
-        <h2 id="mission-title">Mission 1</h2>
-        <p id="mission-desc" style="font-size: 18px; line-height: 1.5; color: #555;"></p>
+        <h2 id="mission-title" style="color: var(--primary);">Mission 1</h2>
+        <p id="mission-desc" style="font-size: 1.1rem; line-height: 1.5; color: #555; min-height: 3rem;"></p>
         
         <div class="input-group">
             <label>정답 (알파벳 1글자)</label>
-            <input type="text" id="answer" maxlength="1" style="text-transform: uppercase; text-align: center; font-size: 20px;">
+            <input type="text" id="answer" maxlength="1" style="text-transform: uppercase; text-align: center; font-size: 1.5rem; letter-spacing: 2px;">
         </div>
-        <button onclick="checkAnswer()">정답 확인</button>
+        <button id="submit-btn">정답 확인</button>
         
         <div class="letters" id="collected-letters">_ _ _ _ _ _</div>
     </div>
 
+    <!-- 3. 성공 화면 -->
     <div id="success-area" class="hidden">
-        <h2>🎉 방탈출 성공! 🎉</h2>
+        <h2 style="color: var(--success); font-size: 2rem; margin-bottom: 0.5rem;">🎉 성공! 🎉</h2>
         <p>선생님께 가서 완성된 코드를 조용히 말씀해 주세요!</p>
         <div class="letters">S U M M E R</div>
-        <p>그리고 활동지의 질문에 대답하여 도장을 받으세요!</p>
+        <p style="color: #666; font-size: 0.9rem;">그리고 활동지의 질문에 대답하여 도장을 받으세요!</p>
     </div>
 
+    <!-- 4. 교사 모드 화면 -->
     <div id="teacher-area" class="hidden">
-        <h2>👨‍🏫 교사 모드 (클리어 현황)</h2>
-        <button onclick="loadStudentData()" style="width:auto; margin-bottom:10px;">새로고침</button>
-        <button onclick="exitTeacherMode()" style="background-color:#7f8c8d; width:auto; margin-bottom:10px;">돌아가기</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>학번/이름</th>
-                    <th>상태</th>
-                    <th>클리어 시간</th>
-                </tr>
-            </thead>
-            <tbody id="student-list">
-            </tbody>
-        </table>
+        <h2 style="text-align: center; color: var(--secondary);">👨‍🏫 교사 모드</h2>
+        <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+            <button id="refresh-btn">새로고침</button>
+            <button id="exit-teacher-btn" class="secondary-btn">돌아가기</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>학번/이름</th>
+                        <th>상태</th>
+                        <th>완료 시간</th>
+                    </tr>
+                </thead>
+                <tbody id="student-list">
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-<script>
-    // 1. Firebase 설정 (선생님의 프로젝트 정보로 변경하세요)
+<!-- 맞춤형 모달 (알림/입력창) -->
+<div id="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-message" id="modal-message">메시지 내용</div>
+        <div class="input-group modal-input" id="modal-input-group">
+            <input type="password" id="modal-input" placeholder="비밀번호 입력">
+        </div>
+        <div class="modal-buttons">
+            <button id="modal-ok-btn">확인</button>
+            <button id="modal-cancel-btn">취소</button>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase 모듈 및 앱 로직 -->
+<script type="module">
+    // 1. 최신 Firebase 모듈 임포트 (v11)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // 선생님의 Firebase 설정
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyDS_L_TlH-zKtGuQg0HdSA83YNTtOWBFys",
+        authDomain: "escape-9d5f3.firebaseapp.com",
+        projectId: "escape-9d5f3",
+        storageBucket: "escape-9d5f3.firebasestorage.app",
+        messagingSenderId: "374663250916",
+        appId: "1:374663250916:web:cb09d5af95fd41c433fdf1",
+        measurementId: "G-DY24G9LEWJ"
     };
 
     // Firebase 초기화
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     // 2. 미션 데이터 설정
     const missions = [
@@ -114,15 +294,76 @@
     let studentInfo = {};
     let collectedLetters = [];
 
-    // 3. 게임 로직
-    function startGame() {
-        const g = document.getElementById('grade').value;
-        const c = document.getElementById('classNum').value;
-        const n = document.getElementById('studentNum').value;
-        const name = document.getElementById('studentName').value;
+    // --- UI 및 모달 제어 함수 ---
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalMessage = document.getElementById('modal-message');
+    const modalInputGroup = document.getElementById('modal-input-group');
+    const modalInput = document.getElementById('modal-input');
+    const modalOkBtn = document.getElementById('modal-ok-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+    let modalResolve = null;
+
+    // 커스텀 알림창 (alert 대체)
+    function showAlert(message) {
+        return new Promise((resolve) => {
+            modalMessage.innerHTML = message;
+            modalInputGroup.style.display = 'none';
+            modalCancelBtn.style.display = 'none';
+            modalOverlay.classList.add('active');
+            
+            modalOkBtn.onclick = () => {
+                modalOverlay.classList.remove('active');
+                resolve();
+            };
+        });
+    }
+
+    // 커스텀 입력창 (prompt 대체)
+    function showPrompt(message) {
+        return new Promise((resolve) => {
+            modalMessage.innerHTML = message;
+            modalInputGroup.style.display = 'block';
+            modalInput.value = '';
+            modalCancelBtn.style.display = 'block';
+            modalOverlay.classList.add('active');
+            modalInput.focus();
+            
+            modalOkBtn.onclick = () => {
+                modalOverlay.classList.remove('active');
+                resolve(modalInput.value);
+            };
+            modalCancelBtn.onclick = () => {
+                modalOverlay.classList.remove('active');
+                resolve(null);
+            };
+            // 엔터키 입력 지원
+            modalInput.onkeyup = (e) => {
+                if (e.key === 'Enter') modalOkBtn.click();
+            };
+        });
+    }
+
+    // --- 게임 로직 ---
+    document.getElementById('start-btn').addEventListener('click', startGame);
+    document.getElementById('submit-btn').addEventListener('click', checkAnswer);
+    
+    // 엔터키로 제출 기능
+    document.querySelectorAll('#login-area input').forEach(input => {
+        input.addEventListener('keyup', (e) => { if(e.key === 'Enter') startGame(); });
+    });
+    document.getElementById('answer').addEventListener('keyup', (e) => {
+        if(e.key === 'Enter') checkAnswer();
+    });
+
+    async function startGame() {
+        const g = document.getElementById('grade').value.trim();
+        const c = document.getElementById('classNum').value.trim();
+        const n = document.getElementById('studentNum').value.trim();
+        const name = document.getElementById('studentName').value.trim();
 
         if(!g || !c || !n || !name) {
-            alert("정보를 모두 입력해주세요!");
+            await showAlert("⚠️ 학년, 반, 번호, 이름을 <br>모두 입력해주세요!");
             return;
         }
 
@@ -136,10 +377,11 @@
     function updateMissionUI() {
         document.getElementById('mission-title').innerText = `Mission ${currentMission + 1}`;
         document.getElementById('mission-desc').innerText = missions[currentMission].desc;
-        document.getElementById('answer').value = "";
-        document.getElementById('answer').focus();
+        const answerInput = document.getElementById('answer');
+        answerInput.value = "";
+        setTimeout(() => answerInput.focus(), 100);
         
-        // 글자 표시 업데이트 (_ _ _ _ _ _)
+        // 글자 표시 업데이트
         let displayStr = "";
         for(let i=0; i<missions.length; i++) {
             displayStr += (i < collectedLetters.length) ? collectedLetters[i] + " " : "_ ";
@@ -147,84 +389,117 @@
         document.getElementById('collected-letters').innerText = displayStr.trim();
     }
 
-    function checkAnswer() {
-        const userAnswer = document.getElementById('answer').value.toUpperCase();
+    async function checkAnswer() {
+        const answerInput = document.getElementById('answer');
+        const userAnswer = answerInput.value.toUpperCase().trim();
+        
+        if (!userAnswer) return;
+
         if(userAnswer === missions[currentMission].answer) {
             collectedLetters.push(userAnswer);
             currentMission++;
             
             if(currentMission < missions.length) {
-                alert("정답입니다! 다음 미션으로 이동합니다.");
+                await showAlert("✅ <b>정답입니다!</b><br>다음 미션으로 이동합니다.");
                 updateMissionUI();
             } else {
                 gameClear();
             }
         } else {
-            alert("틀렸습니다. 활동지를 다시 확인해 보세요!");
+            await showAlert("❌ <b>틀렸습니다.</b><br>활동지를 다시 확인해 보세요!");
+            answerInput.value = "";
+            answerInput.focus();
         }
     }
 
-    function gameClear() {
+    async function gameClear() {
         document.getElementById('game-area').classList.add('hidden');
         document.getElementById('success-area').classList.remove('hidden');
 
         // Firebase에 클리어 데이터 저장
-        const docId = `${studentInfo.grade}-${studentInfo.class}-${studentInfo.number}-${studentInfo.name}`;
-        db.collection("escape_records").doc(docId).set({
-            ...studentInfo,
-            status: "CLEAR",
-            clearTime: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(error => {
-            console.error("Error saving document: ", error);
-        });
+        try {
+            // 문서 ID 형식: 학년-반-번호-이름 (예: 6-1-12-홍길동)
+            const docId = `${studentInfo.grade}-${studentInfo.class}-${studentInfo.number}-${studentInfo.name}`;
+            const docRef = doc(db, "escape_records", docId);
+            
+            await setDoc(docRef, {
+                ...studentInfo,
+                status: "CLEAR",
+                clearTime: serverTimestamp()
+            });
+        } catch (error) {
+            console.error("데이터 저장 실패:", error);
+            // 저장 실패해도 학생 화면 진행은 유지
+        }
     }
 
-    // 4. 교사 모드 로직 (비밀번호: 0000)
-    function enterTeacherMode() {
-        const pwd = prompt("교사 인증 비밀번호를 입력하세요:");
-        if(pwd === "0000") { // 비밀번호는 원하시는 대로 변경하세요.
+    // --- 교사 모드 로직 ---
+    document.getElementById('main-title').addEventListener('dblclick', enterTeacherMode);
+    document.getElementById('refresh-btn').addEventListener('click', loadStudentData);
+    document.getElementById('exit-teacher-btn').addEventListener('click', exitTeacherMode);
+
+    async function enterTeacherMode() {
+        const pwd = await showPrompt("👨‍🏫 <b>교사 인증</b><br>비밀번호를 입력하세요:");
+        
+        if(pwd === "0000") { // 기본 비밀번호 (필요시 변경하세요)
             document.getElementById('login-area').classList.add('hidden');
             document.getElementById('game-area').classList.add('hidden');
             document.getElementById('success-area').classList.add('hidden');
             document.getElementById('teacher-area').classList.remove('hidden');
             loadStudentData();
         } else if(pwd !== null) {
-            alert("비밀번호가 틀렸습니다.");
+            await showAlert("❌ 비밀번호가 틀렸습니다.");
         }
     }
 
     function exitTeacherMode() {
         document.getElementById('teacher-area').classList.add('hidden');
+        // 초기화 상태로 돌리기
+        currentMission = 0;
+        collectedLetters = [];
+        document.getElementById('grade').value = '';
+        document.getElementById('classNum').value = '';
+        document.getElementById('studentNum').value = '';
+        document.getElementById('studentName').value = '';
+        
         document.getElementById('login-area').classList.remove('hidden');
     }
 
-    function loadStudentData() {
+    async function loadStudentData() {
         const tbody = document.getElementById('student-list');
-        tbody.innerHTML = "<tr><td colspan='3'>데이터 불러오는 중...</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='3'>데이터 불러오는 중... ⏳</td></tr>";
 
-        db.collection("escape_records")
-          .orderBy("clearTime", "desc")
-          .get()
-          .then((querySnapshot) => {
+        try {
+            const recordsRef = collection(db, "escape_records");
+            const q = query(recordsRef, orderBy("clearTime", "desc"));
+            const querySnapshot = await getDocs(q);
+            
             tbody.innerHTML = "";
             if(querySnapshot.empty) {
-                tbody.innerHTML = "<tr><td colspan='3'>아직 완료한 학생이 없습니다.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='3' style='color:#666;'>아직 완료한 학생이 없습니다.</td></tr>";
                 return;
             }
+            
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-                const timeStr = data.clearTime ? data.clearTime.toDate().toLocaleTimeString('ko-KR') : "알 수 없음";
+                // Firestore 타임스탬프 처리
+                let timeStr = "알 수 없음";
+                if (data.clearTime) {
+                    const date = data.clearTime.toDate();
+                    timeStr = `${date.getHours()}시 ${date.getMinutes()}분 ${date.getSeconds()}초`;
+                }
+                
                 const row = `<tr>
-                    <td>${data.grade}학년 ${data.class}반 ${data.number}번 ${data.name}</td>
-                    <td style="color:green; font-weight:bold;">${data.status}</td>
-                    <td>${timeStr}</td>
+                    <td><b>${data.grade}</b>-${data.class}-${data.number} ${data.name}</td>
+                    <td style="color:var(--success); font-weight:bold;">${data.status}</td>
+                    <td style="color:#666; font-size:0.85rem;">${timeStr}</td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
-        }).catch((error) => {
+        } catch (error) {
             console.error("데이터 로드 에러:", error);
-            tbody.innerHTML = "<tr><td colspan='3'>데이터를 불러오는 데 실패했습니다.</td></tr>";
-        });
+            tbody.innerHTML = "<tr><td colspan='3' style='color:var(--danger);'>데이터를 불러오는 데 실패했습니다. (DB 규칙을 확인해주세요)</td></tr>";
+        }
     }
 </script>
 
