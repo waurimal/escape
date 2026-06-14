@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1학기 총복습 영어 방탈출</title>
+    <title>방탈출 게임</title>
     <style>
         :root {
             --primary: #3498db;
@@ -59,7 +59,9 @@
             font-size: 0.9rem;
         }
 
-        .input-group input { 
+        .input-group input[type="text"], 
+        .input-group input[type="number"], 
+        .input-group select { 
             width: 100%; 
             padding: 0.75rem; 
             border: 1px solid #ddd; 
@@ -67,9 +69,12 @@
             box-sizing: border-box; 
             font-size: 1rem;
             transition: border-color 0.2s;
+            font-family: inherit;
+            background-color: white;
         }
 
-        .input-group input:focus {
+        .input-group input:focus,
+        .input-group select:focus {
             outline: none;
             border-color: var(--primary);
         }
@@ -104,6 +109,34 @@
             background: #fff0f0;
             padding: 1rem;
             border-radius: 0.5rem;
+        }
+
+        /* 객관식 보기 스타일 */
+        .choice-list {
+            text-align: left; 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border: 1px solid #ddd;
+        }
+        
+        .choice-list label {
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 12px; 
+            font-weight: normal; 
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .choice-list label:last-child {
+            margin-bottom: 0;
+        }
+        
+        .choice-list input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+            cursor: pointer;
         }
 
         #teacher-area {
@@ -180,22 +213,46 @@
 
 <div class="container">
     <!-- 타이틀을 더블클릭하면 교사모드로 진입합니다 -->
-    <h1 id="main-title">🕵️‍♂️ 1학기 복습 방탈출</h1>
+    <h1 id="main-title">🕵️‍♂️ 방탈출 게임</h1>
 
     <!-- 1. 학생 정보 입력 화면 -->
     <div id="login-area">
         <p style="color: #666; margin-bottom: 1.5rem;">방탈출에 도전할 요원 정보를 입력하세요.</p>
         <div class="input-group">
-            <label>학년</label><input type="number" id="grade" placeholder="예: 6" min="1" max="6">
+            <label>학년</label>
+            <select id="grade">
+                <option value="">학년 선택</option>
+                <option value="1">1학년</option>
+                <option value="2">2학년</option>
+                <option value="3">3학년</option>
+                <option value="4">4학년</option>
+                <option value="5">5학년</option>
+                <option value="6">6학년</option>
+            </select>
         </div>
         <div class="input-group">
-            <label>반</label><input type="number" id="classNum" placeholder="예: 1" min="1" max="20">
+            <label>반</label>
+            <select id="classNum">
+                <option value="">반 선택</option>
+                <option value="1">1반</option>
+                <option value="2">2반</option>
+                <option value="3">3반</option>
+                <option value="4">4반</option>
+                <option value="5">5반</option>
+                <option value="6">6반</option>
+                <option value="7">7반</option>
+                <option value="8">8반</option>
+                <option value="9">9반</option>
+                <option value="10">10반</option>
+            </select>
         </div>
         <div class="input-group">
-            <label>번호</label><input type="number" id="studentNum" placeholder="예: 12" min="1" max="50">
+            <label>번호</label>
+            <input type="number" id="studentNum" placeholder="예: 12" min="1" max="50">
         </div>
         <div class="input-group">
-            <label>이름</label><input type="text" id="studentName" placeholder="예: 홍길동">
+            <label>이름</label>
+            <input type="text" id="studentName" placeholder="예: 홍길동">
         </div>
         <button id="start-btn">게임 시작하기</button>
     </div>
@@ -205,10 +262,11 @@
         <h2 id="mission-title" style="color: var(--primary);">Mission 1</h2>
         <p id="mission-desc" style="font-size: 1.1rem; line-height: 1.5; color: #555; min-height: 3rem;"></p>
         
-        <div class="input-group">
-            <label>정답 (알파벳 1글자)</label>
-            <input type="text" id="answer" maxlength="1" style="text-transform: uppercase; text-align: center; font-size: 1.5rem; letter-spacing: 2px;">
+        <!-- 미션 유형에 따라 입력/선택 창이 동적으로 변하는 영역 -->
+        <div id="dynamic-input-container" class="input-group">
+            <!-- JS에서 동적 생성됨 -->
         </div>
+
         <button id="submit-btn">정답 확인</button>
         
         <div class="letters" id="collected-letters">_ _ _ _ _ _</div>
@@ -280,14 +338,48 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 2. 미션 데이터 설정
+    // 2. 미션 데이터 설정 (유형별 혼합)
+    // type: 'text' (주관식 단답형), type: 'choice' (객관식)
     const missions = [
-        { desc: "Find the 1st letter of Ethan's grade.", answer: "S" },
-        { desc: "Find the 2nd letter of the name of the person with the earliest birthday.", answer: "U" },
-        { desc: "Find the 3rd letter of Chloe's favorite season.", answer: "M" },
-        { desc: "Find the 1st letter of Chloe's test subject.", answer: "M" },
-        { desc: "Find the 4th letter of the name of the building behind Judy's house.", answer: "E" },
-        { desc: "Find the 2nd letter of the color of Liam's cap.", answer: "R" }
+        { 
+            type: "text", 
+            desc: "Find the 1st letter of Ethan's grade.", 
+            answer: "S", 
+            letter: "S" 
+        },
+        { 
+            type: "choice", 
+            desc: "누구의 생일이 가장 빠른가요? (정답을 맞히면 힌트 글자를 얻습니다)", 
+            options: ["Ethan", "Judy", "Chloe", "Liam"], 
+            answer: "1", // 인덱스 "1" -> Judy
+            letter: "U" 
+        },
+        { 
+            type: "text", 
+            desc: "Find the 3rd letter of Chloe's favorite season.", 
+            answer: "M", 
+            letter: "M" 
+        },
+        { 
+            type: "choice", 
+            desc: "Chloe의 시험 과목은 무엇일까요?", 
+            options: ["Math", "Science", "History", "English"], 
+            answer: "0", // 인덱스 "0" -> Math
+            letter: "M" 
+        },
+        { 
+            type: "text", 
+            desc: "Find the 4th letter of the name of the building behind Judy's house.", 
+            answer: "E", 
+            letter: "E" 
+        },
+        { 
+            type: "choice", 
+            desc: "Liam의 모자 색깔은?", 
+            options: ["Red", "Green", "Blue", "Black"], 
+            answer: "1", // 인덱스 "1" -> Green
+            letter: "R" 
+        }
     ];
 
     let currentMission = 0;
@@ -302,9 +394,7 @@
     const modalOkBtn = document.getElementById('modal-ok-btn');
     const modalCancelBtn = document.getElementById('modal-cancel-btn');
 
-    let modalResolve = null;
-
-    // 커스텀 알림창 (alert 대체)
+    // 커스텀 알림창
     function showAlert(message) {
         return new Promise((resolve) => {
             modalMessage.innerHTML = message;
@@ -319,7 +409,7 @@
         });
     }
 
-    // 커스텀 입력창 (prompt 대체)
+    // 커스텀 입력창
     function showPrompt(message) {
         return new Promise((resolve) => {
             modalMessage.innerHTML = message;
@@ -337,7 +427,6 @@
                 modalOverlay.classList.remove('active');
                 resolve(null);
             };
-            // 엔터키 입력 지원
             modalInput.onkeyup = (e) => {
                 if (e.key === 'Enter') modalOkBtn.click();
             };
@@ -348,12 +437,14 @@
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('submit-btn').addEventListener('click', checkAnswer);
     
-    // 엔터키로 제출 기능
+    // 로그인 엔터키 지원
     document.querySelectorAll('#login-area input').forEach(input => {
         input.addEventListener('keyup', (e) => { if(e.key === 'Enter') startGame(); });
     });
-    document.getElementById('answer').addEventListener('keyup', (e) => {
-        if(e.key === 'Enter') checkAnswer();
+
+    // 주관식 미션 엔터키 지원 (동적 생성 요소 대응)
+    document.getElementById('dynamic-input-container').addEventListener('keyup', (e) => {
+        if(e.key === 'Enter' && e.target.id === 'answer') checkAnswer();
     });
 
     async function startGame() {
@@ -363,7 +454,7 @@
         const name = document.getElementById('studentName').value.trim();
 
         if(!g || !c || !n || !name) {
-            await showAlert("⚠️ 학년, 반, 번호, 이름을 <br>모두 입력해주세요!");
+            await showAlert("⚠️ 학년, 반, 번호, 이름을 <br>모두 입력/선택해주세요!");
             return;
         }
 
@@ -375,11 +466,40 @@
     }
 
     function updateMissionUI() {
+        const mission = missions[currentMission];
         document.getElementById('mission-title').innerText = `Mission ${currentMission + 1}`;
-        document.getElementById('mission-desc').innerText = missions[currentMission].desc;
-        const answerInput = document.getElementById('answer');
-        answerInput.value = "";
-        setTimeout(() => answerInput.focus(), 100);
+        document.getElementById('mission-desc').innerText = mission.desc;
+        
+        const container = document.getElementById('dynamic-input-container');
+        container.innerHTML = ""; // 기존 입력창 초기화
+
+        // 문제 유형에 따라 동적으로 UI 생성
+        if (mission.type === "text") {
+            container.innerHTML = `
+                <label>정답 (알파벳 1글자)</label>
+                <input type="text" id="answer" maxlength="1" placeholder="알파벳 입력" style="text-transform: uppercase; text-align: center; font-size: 1.5rem; letter-spacing: 2px;">
+            `;
+            setTimeout(() => {
+                const answerInput = document.getElementById('answer');
+                if (answerInput) answerInput.focus();
+            }, 100);
+        } else if (mission.type === "choice") {
+            let optionsHtml = "";
+            mission.options.forEach((opt, idx) => {
+                optionsHtml += `
+                    <label>
+                        <input type="radio" name="choice-answer" value="${idx}">
+                        ${opt}
+                    </label>
+                `;
+            });
+            container.innerHTML = `
+                <label>정답을 선택하세요</label>
+                <div class="choice-list">
+                    ${optionsHtml}
+                </div>
+            `;
+        }
         
         // 글자 표시 업데이트
         let displayStr = "";
@@ -390,25 +510,43 @@
     }
 
     async function checkAnswer() {
-        const answerInput = document.getElementById('answer');
-        const userAnswer = answerInput.value.toUpperCase().trim();
-        
-        if (!userAnswer) return;
+        const mission = missions[currentMission];
+        let userAnswer = "";
 
-        if(userAnswer === missions[currentMission].answer) {
-            collectedLetters.push(userAnswer);
+        // 미션 유형에 따라 입력값 가져오기
+        if (mission.type === "text") {
+            const answerInput = document.getElementById('answer');
+            if (!answerInput || !answerInput.value.trim()) {
+                await showAlert("⚠️ <b>정답을 입력해주세요!</b>");
+                return;
+            }
+            userAnswer = answerInput.value.toUpperCase().trim();
+        } else if (mission.type === "choice") {
+            const selectedOpt = document.querySelector('input[name="choice-answer"]:checked');
+            if (!selectedOpt) {
+                await showAlert("⚠️ <b>정답을 선택해주세요!</b>");
+                return;
+            }
+            userAnswer = selectedOpt.value;
+        }
+
+        // 정답 확인
+        if(userAnswer === mission.answer) {
+            collectedLetters.push(mission.letter); // 단서 글자 수집
             currentMission++;
             
             if(currentMission < missions.length) {
-                await showAlert("✅ <b>정답입니다!</b><br>다음 미션으로 이동합니다.");
+                await showAlert(`✅ <b>정답입니다!</b><br>단서 <strong style='color:var(--danger); font-size:1.2rem;'>${mission.letter}</strong> 를 얻었습니다.<br>다음 미션으로 이동합니다.`);
                 updateMissionUI();
             } else {
                 gameClear();
             }
         } else {
-            await showAlert("❌ <b>틀렸습니다.</b><br>활동지를 다시 확인해 보세요!");
-            answerInput.value = "";
-            answerInput.focus();
+            await showAlert("❌ <b>틀렸습니다.</b><br>다시 한 번 생각해 보세요!");
+            if (mission.type === "text") {
+                document.getElementById('answer').value = "";
+                document.getElementById('answer').focus();
+            }
         }
     }
 
